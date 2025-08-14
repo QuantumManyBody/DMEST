@@ -2,3 +2,9 @@ name = "DMEST"
 uuid = "6013836a-7c47-4d6b-b462-023fdd7e77bd"
 authors = ["Kangbo <li95@llnl.gov>"]
 version = "0.1.0"
+
+[deps]
+CombDiff = "ef708a43-c8a3-43f4-8f65-1f04ee4c5bb0"
+GTO = "00d7d1ff-f04d-4e99-b9f2-420eea056f9d"
+TestToDoc = "56cb39a9-9ed8-470e-af4a-727e0c06f201"
+WTP = "7f2d596f-d764-40ee-883d-fa5ff5538bc6"

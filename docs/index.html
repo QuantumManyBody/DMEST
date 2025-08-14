@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap" rel="stylesheet">
+
+<script>
+MathJax = {
+  loader: {load: ['[tex]/physics']},
+
+  tex: {
+    inlineMath: {'[+]': [['$', '$']]},
+    tags: 'ams',
+    packages: {'[+]': ['physics']},
+  },
+  svg: {
+    fontCache: 'global'
+  }
+};
+</script> 
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/sunburst.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/julia.min.js"></script>
+<script>hljs.highlightAll();</script>
+<style>
+    body {
+    background-color: rgb(15, 15, 15);
+    color: rgb(240, 240, 240);
+    font-size: 12pt;
+    font-family: "Geist", sans-serif;
+    margin: 0;
+    display: flex;
+}
+
+
+.toc {
+    flex: 1;
+    background-color: rgb(30, 30, 30);
+}
+
+.toccontainer {
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow: auto;
+    scrollbar-color: rgb(160, 160, 160) rgb(30, 30, 30);
+}
+
+.toggler {
+    width: 8px;
+    color: rgb(50, 50, 50);
+    background-color: rgb(50, 50, 50);
+}
+
+.toggler:hover {
+    background-color: rgb(80, 80, 80);
+}
+
+.main {
+    flex: 4;
+    margin-top: 2em;
+    scrollbar-color: rgb(160, 160, 160) rgb(30, 30, 30);
+}
+
+a {
+    text-decoration: none;
+    color: rgb(210, 210, 210);
+}
+
+a:hover {
+    color: rgb(214, 0, 28);
+}
+
+.content {
+    max-width: 40em;
+    min-width: 20em;
+    margin: auto;
+}
+
+
+p {
+    padding: 0px 8px;
+}
+
+
+
+pre div button {
+    display: block;
+    background-color: rgb(70, 70, 70);
+    border: none;
+    font-size: 1em;
+    color: rgb(210, 210, 210);
+}
+
+pre div button:hover {
+    background-color: rgb(214, 0, 28);
+    color: white;
+}
+
+pre div button:active {
+    /* border: 1px solid rgb(75, 210, 210); */
+    background-color: white;
+    color: black;
+}
+
+pre div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid rgb(110, 110, 110);
+}
+
+pre p {
+    /* font-size: 0.6em; */
+    margin: 0px;
+    color: rgb(140, 140, 140);
+}
+
+pre {
+    /* border-radius: 4px; */
+    border: 1px solid rgb(120, 120, 120);
+    margin-left: 8px;
+}
+
+pre code.hljs {
+    padding: 0.4em;
+    font-size: 12pt;
+    font-family: "Geist Mono", monospace;
+    scrollbar-color: rgb(160, 160, 160) rgb(30, 30, 30);
+    background-color: rgb(15,15,15);
+}
+
+.page {
+    font-size: 1.6em;
+    font-family: "Geist Mono", monospace;
+    padding: 2px 8px;
+    margin-top: 3em;
+}
+
+.page:hover {
+    color: rgb(214, 0, 28);
+}
+
+h2,
+h3 {
+    font-size: 1em;
+    font-weight: normal;
+    padding: 2px 8px;
+    margin-top: 3em;
+}
+
+h2 {
+    background-color: rgb(50, 50, 50);
+}
+
+h3 {
+    border-bottom: 1px solid rgb(120, 120, 120);
+}
+
+.toc a,
+.toc details summary {
+    padding: 2px 6px;
+    font-family: "Geist", sans-serif;
+    font-size: 20px;
+    color: rgb(210, 210, 210);
+    border-bottom: 2px solid rgb(60, 60, 60);
+}
+.toc details a {
+    padding-left: 20px;
+}
+
+.toc a {
+    display: block;
+}
+
+.toc a:hover,
+.toc details summary:hover {
+    color: rgb(240, 240, 240);
+    background-color: rgb(214, 0, 24);
+    border-bottom: 2px solid rgb(214, 0, 28);
+}
+
+.toc a:active,
+.toc details summary:active {
+    /* border: 2px dotted rgb(200, 200, 200); */
+    background-color: white;
+    color: black;
+}
+
+.pkgname {
+    background-color: rgb(84, 84, 84);
+    padding: 10px 8px;
+}
+
+td,
+th {
+    margin: 0px;
+    padding: 8px;
+    border: 1px solid rgb(120, 120, 120);
+}
+
+table {
+    margin: auto;
+    border: 1px solid rgb(120, 120, 120);
+    border-collapse: collapse;
+    /* background-color: rgb(30,30,30); */
+}
+</style>
+<script>
+async function copyCode(block) {
+  let code = block.querySelector("code");
+  let text = code.innerText;
+
+  await navigator.clipboard.writeText(text);
+}
+
+function clip() {
+    let blocks = document.querySelectorAll("pre:has(code)");
+    blocks.forEach((block) => {
+      let button = block.querySelector("div button");
+          if (button){
+              button.addEventListener("click", async () => {
+            await copyCode(block);
+          });
+
+              }
+    });
+}
+function toggle_sidebar() {
+  var x = document.getElementById("sidebar");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+</script>
+</head>
+    <body onload="clip();">
+    <aside id="sidebar" class="toc">
+    <div class="toccontainer">
+    <image style="margin: 10px 20px;"
+    width="120px" src="./assets/logo.png">
+    </image>
+    <div class="pkgname">DMEST</div>
+    
+<a href="#cover.jl">cover</a>
+<details>
+                <summary>first_quant</summary>
+                
+<a href="#first_quant-spin_restricted_hartree_fock.jl">spin_restricted_hartree_fock</a>
+</details>
+<details>
+                <summary>periodic</summary>
+                
+<a href="#periodic-dft.jl">dft</a>
+</details>
+<details>
+                <summary>second_quant</summary>
+                
+<a href="#second_quant-fci.jl">fci</a>
+</details>
+    </div>
+    </aside>
+    <div class="toggler" onclick="toggle_sidebar();">-</div>
+    <div class="main">
+    <div class="content">
+    <div style="
+display:flex;
+align-items: center;
+justify-content: center;
+padding-bottom: 4em;
+border-bottom: 4px solid white;
+">
+<h1 style="font-size: 2em"> Developer Manual 
+        of Electronic Structure Theory
+    </h1>
+</div>
+<details class="title" style="margin: 1em 0em"><summary class="page"><span id="first_quant-spin_restricted_hartree_fock.jl">First quant/spin restricted hartree fock</span></summary><pre><code class="language-julia">md"""
+## Construction the system
+
+First make two hydrogen atoms spaced by $d = 2$.
+"""
+
+using WTP, GTO, Test, LinearAlgebra
+
+d = 2.0
+h2 = [make_atom(:H, 0.0, 0.0, 0.0), make_atom(:H, d, 0.0, 0.0)]
+
+md"""
+Given the molecule, we can compute the total number of 
+electrons by summing over the nuclear charges.
+"""
+
+n_e = sum(charge, h2)
+
+@test n_e == 2
+
+md"""
+## Pick a basis
+Hartree-Fock is first based on the approximation
+
+$$
+\begin{equation}
+\Psi = \psi_1 \wedge \psi_2 \wedge \ldots \psi_{N_e}.
+\end{equation}
+$$
+
+This approximation is further approximated with 
+
+$$
+\psi_i(r) = \sum_j C_{j i} \chi_j(r).
+$$
+
+We can pick a basis set from basis set exchange 
+[BSE](https://www.basissetexchange.org/) as follows
+"""
+
+basis_set = load_basis("6-21g.1.json")
+basis = generate_basis(basis_set, h2...)
+n_b = length(basis)
+@test n_b == 4
+
+md"""
+## Evaluate the integrals
+
+To evaluate the energy, we first need the one-electron integrals between the basis functions.
+
+$$
+\begin{align}
+S_{p q} &= \int \chi_p^*(r) \chi_q(r) \mathrm{d} r,\\
+T_{p q} &= \int \chi_p^*(r) \nabla^2 \chi_q(r) \mathrm{d} r,\\
+A_{p q} &= \sum_i \int \frac{\chi_p^*(r) \chi_q(r)}{|r - R_i|} \mathrm{d} r.
+\end{align}
+$$
+
+These integrals can be constructed as follows
+
+"""
+
+S = [p' * q for p in basis, q in basis]
+T = [p' * ∇² * q for p in basis, q in basis]
+A = [p' * VNuc(h2...) * q for p in basis, q in basis]
+
+md"""
+The more challenging part is the two electron integrals, which is 
+a four-legged tensor 
+
+$$
+\begin{equation}
+J_{p q r s} = V_{p s r q} = \iint \frac{\chi_p(r) \chi_q(r) \chi_r(r') \chi_s(r') }{|r - r'|} \mathrm{d}r \mathrm{d} r'
+\end{equation}
+$$
+
+This can also be contructed through a comprehension and a `permutedims`.
+"""
+
+J = [(p * q | r * s) for p in basis, q in basis, r in basis, s in basis]
+K = permutedims(J, (1, 3, 2, 4))
+
+
+md"""
+If we are doing RHF, we need the following tensors.
+"""
+h = T + A
+Q = 2J - K
+
+
+md"""
+## Self consistent field iteration
+
+The self-consistent field iteration involves iteratively  constructing and diagonalizing the Fock matrix. The construction of the Fock matrix is
+
+$$
+\begin{equation}
+F(C)_{p q} = h_{p q} + \sum_{rs} Q_{p q r s} \sum_n C_{r n} C_{s n} 
+\end{equation}
+$$
+
+"""
+fock(C) = h + [dot(C, Q[p, q, :, :] * C) for p in 1:n_b, q in 1:n_b]
+
+md"""
+We can then diagonalize the Fock matrix and take the first $N_e / 2$
+eigenvectors as the new $C$. The SCF update is thus
+"""
+
+scf_update(C, S) = eigen(Hermitian(fock(C)), Hermitian(S)).vectors[:, 1:div(n_e, 2)]
+
+md"""
+Importantly, we casted the Fock matrix and the overlap matrix 
+to Hermitian to tell Julia's eigensolver to use the algorithm for Hermitian matrices, which is drastically better than the general one.
+
+With all the routines in place, we can solve for the HF ground state of 
+H2. First, make a wish to the random number generator
+"""
+using Random
+Random.seed!(2077)
+C = qr(rand(n_b, div(n_e, 2))).Q |> Matrix
+
+md"""
+Then, we can do the SCF iteration just by repeatedly applying the SCF update.
+"""
+for _ in 1:100
+    C = scf_update(C, S)
+end
+
+md"""
+## Energy evaluation
+
+Don't forget to add the nuclear energy 
+
+$$
+\begin{equation}
+E_{\mathrm{NN}} = \frac{1}{2} \sum_{i \neq j} \frac{Z_i Z_j}{|R_i - R_j|}
+\end{equation}
+$$
+"""
+
+e_nuc(atoms) = 1 / 2 * sum(charge(i) * charge(j) / norm(coordinates(i) - coordinates(j)) for i in atoms, j in atoms if j != i)
+
+md"""
+We can then compute the total energy as 
+
+$$
+\begin{equation}
+E_{\mathrm{HF}} = \sum_{p q} (h + F(C))_{p q} \sum_n C_{q n} C_{p n} + E_{\mathrm{NN}}\label{eqn:etotal}
+\end{equation}
+$$
+"""
+
+energy(C) = real(dot(C, (h + fock(C)) * C)) + e_nuc(h2)
+
+@test isapprox(energy(C), -1.0802700699226433)
+</code><div><p></p><button>copy</button></div></pre></details>
+<h2 id="construction-the-system"><a href="#construction-the-system" class="anchor"></a>Construction the system</h2>
+<p>First make two hydrogen atoms spaced by <span class="math tex">\(d = 2\)</span>.</p>
+<pre><code class="language-julia">using WTP, GTO, Test, LinearAlgebra
+
+d = 2.0
+h2 = [make_atom(:H, 0.0, 0.0, 0.0), make_atom(:H, d, 0.0, 0.0)]</code><div><p>test/first_quant/spin_restricted_hartree_fock.jl</p><button>copy</button></div></pre>
+<p>Given the molecule, we can compute the total number of
+electrons by summing over the nuclear charges.</p>
+<pre><code class="language-julia">n_e = sum(charge, h2)
+
+@test n_e == 2</code><div><p>test/first_quant/spin_restricted_hartree_fock.jl</p><button>copy</button></div></pre>
+<h2 id="pick-a-basis"><a href="#pick-a-basis" class="anchor"></a>Pick a basis</h2>
+<p>Hartree-Fock is first based on the approximation</p>
+<div class="display-math tex">\[\begin{equation}
+\Psi = \psi_1 \wedge \psi_2 \wedge \ldots \psi_{N_e}.
+\end{equation}\]</div>
+<p>This approximation is further approximated with</p>
+<div class="display-math tex">\[\psi_i(r) = \sum_j C_{j i} \chi_j(r).\]</div>
+<p>We can pick a basis set from basis set exchange
+<a href="https://www.basissetexchange.org/">BSE</a> as follows</p>
+<pre><code class="language-julia">basis_set = load_basis("6-21g.1.json")
+basis = generate_basis(basis_set, h2...)
+n_b = length(basis)
+@test n_b == 4</code><div><p>test/first_quant/spin_restricted_hartree_fock.jl</p><button>copy</button></div></pre>
+<h2 id="evaluate-the-integrals"><a href="#evaluate-the-integrals" class="anchor"></a>Evaluate the integrals</h2>
+<p>To evaluate the energy, we first need the one-electron integrals between the basis functions.</p>
+<div class="display-math tex">\[\begin{align}
+S_{p q} &= \int \chi_p^*(r) \chi_q(r) \mathrm{d} r,\\
+T_{p q} &= \int \chi_p^*(r) \nabla^2 \chi_q(r) \mathrm{d} r,\\
+A_{p q} &= \sum_i \int \frac{\chi_p^*(r) \chi_q(r)}{|r - R_i|} \mathrm{d} r.
+\end{align}\]</div>
+<p>These integrals can be constructed as follows</p>
+<pre><code class="language-julia">S = [p' * q for p in basis, q in basis]
+T = [p' * ∇² * q for p in basis, q in basis]
+A = [p' * VNuc(h2...) * q for p in basis, q in basis]</code><div><p>test/first_quant/spin_restricted_hartree_fock.jl</p><button>copy</button></div></pre>
+<p>The more challenging part is the two electron integrals, which is
+a four-legged tensor</p>
+<div class="display-math tex">\[\begin{equation}
+J_{p q r s} = V_{p s r q} = \iint \frac{\chi_p(r) \chi_q(r) \chi_r(r') \chi_s(r') }{|r - r'|} \mathrm{d}r \mathrm{d} r'
+\end{equation}\]</div>
+<p>This can also be contructed through a comprehension and a <code>permutedims</code>.</p>
+<pre><code class="language-julia">J = [(p * q | r * s) for p in basis, q in basis, r in basis, s in basis]
+K = permutedims(J, (1, 3, 2, 4))</code><div><p>test/first_quant/spin_restricted_hartree_fock.jl</p><button>copy</button></div></pre>
+<p>If we are doing RHF, we need the following tensors.</p>
+<pre><code class="language-julia">h = T + A
+Q = 2J - K</code><div><p>test/first_quant/spin_restricted_hartree_fock.jl</p><button>copy</button></div></pre>
+<h2 id="self-consistent-field-iteration"><a href="#self-consistent-field-iteration" class="anchor"></a>Self consistent field iteration</h2>
+<p>The self-consistent field iteration involves iteratively  constructing and diagonalizing the Fock matrix. The construction of the Fock matrix is</p>
+<div class="display-math tex">\[\begin{equation}
+F(C)_{p q} = h_{p q} + \sum_{rs} Q_{p q r s} \sum_n C_{r n} C_{s n} 
+\end{equation}\]</div>
+<pre><code class="language-julia">fock(C) = h + [dot(C, Q[p, q, :, :] * C) for p in 1:n_b, q in 1:n_b]</code><div><p>test/first_quant/spin_restricted_hartree_fock.jl</p><button>copy</button></div></pre>
+<p>We can then diagonalize the Fock matrix and take the first <span class="math tex">\(N_e / 2\)</span>
+eigenvectors as the new <span class="math tex">\(C\)</span>. The SCF update is thus</p>
+<pre><code class="language-julia">scf_update(C, S) = eigen(Hermitian(fock(C)), Hermitian(S)).vectors[:, 1:div(n_e, 2)]</code><div><p>test/first_quant/spin_restricted_hartree_fock.jl</p><button>copy</button></div></pre>
+<p>Importantly, we casted the Fock matrix and the overlap matrix
+to Hermitian to tell Julia's eigensolver to use the algorithm for Hermitian matrices, which is drastically better than the general one.</p>
+<p>With all the routines in place, we can solve for the HF ground state of
+H2. First, make a wish to the random number generator</p>
+<pre><code class="language-julia">using Random
+Random.seed!(2077)
+C = qr(rand(n_b, div(n_e, 2))).Q |> Matrix</code><div><p>test/first_quant/spin_restricted_hartree_fock.jl</p><button>copy</button></div></pre>
+<p>Then, we can do the SCF iteration just by repeatedly applying the SCF update.</p>
+<pre><code class="language-julia">for _ in 1:100
+    C = scf_update(C, S)
+end</code><div><p>test/first_quant/spin_restricted_hartree_fock.jl</p><button>copy</button></div></pre>
+<h2 id="energy-evaluation"><a href="#energy-evaluation" class="anchor"></a>Energy evaluation</h2>
+<p>Don't forget to add the nuclear energy</p>
+<div class="display-math tex">\[\begin{equation}
+E_{\mathrm{NN}} = \frac{1}{2} \sum_{i \neq j} \frac{Z_i Z_j}{|R_i - R_j|}
+\end{equation}\]</div>
+<pre><code class="language-julia">e_nuc(atoms) = 1 / 2 * sum(charge(i) * charge(j) / norm(coordinates(i) - coordinates(j)) for i in atoms, j in atoms if j != i)</code><div><p>test/first_quant/spin_restricted_hartree_fock.jl</p><button>copy</button></div></pre>
+<p>We can then compute the total energy as</p>
+<div class="display-math tex">\[\begin{equation}
+E_{\mathrm{HF}} = \sum_{p q} (h + F(C))_{p q} \sum_n C_{q n} C_{p n} + E_{\mathrm{NN}}\label{eqn:etotal}
+\end{equation}\]</div>
+<pre><code class="language-julia">energy(C) = real(dot(C, (h + fock(C)) * C)) + e_nuc(h2)
+
+@test isapprox(energy(C), -1.0802700699226433)</code><div><p>test/first_quant/spin_restricted_hartree_fock.jl</p><button>copy</button></div></pre>
+<details class="title" style="margin: 1em 0em"><summary class="page"><span id="periodic-dft.jl">Periodic/dft</span></summary><pre><code class="language-julia"></code><div><p></p><button>copy</button></div></pre></details>
+<pre><code class="language-julia"></code><div><p>test/periodic/dft.jl</p><button>copy</button></div></pre>
+<details class="title" style="margin: 1em 0em"><summary class="page"><span id="second_quant-fci.jl">Second quant/fci</span></summary><pre><code class="language-julia"></code><div><p></p><button>copy</button></div></pre></details>
+<pre><code class="language-julia"></code><div><p>test/second_quant/fci.jl</p><button>copy</button></div></pre>
+
+    </div>
+    </div>
+</body>
+
+</html>
+    

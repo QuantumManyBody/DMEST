@@ -1,0 +1,9 @@
+[submodule "GTO.jl"]
+	path = GTO.jl
+	url = https://github.com/kangboli/GTO.jl
+[submodule "WTP.jl"]
+	path = WTP.jl
+	url = https://github.com/kangboli/WTP.jl
+[submodule "CombDiff"]
+	path = CombDiff
+	url = https://github.com/kangboli/CombDiff
